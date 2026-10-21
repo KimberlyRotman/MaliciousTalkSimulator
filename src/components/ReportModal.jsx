@@ -20,8 +20,9 @@ const REASONS = [
 const MAX_DETAILS = 500;
 
 export default function ReportModal({ contact, onClose, onSubmit }) {
-  const [reason, setReason] = useState(contact.report?.reason || '');
+  const [reasons, setReasons] = useState(contact.report?.reasons || []);
   const [details, setDetails] = useState(contact.report?.details || '');
+  const toggle = label => setReasons(r => (r.includes(label) ? r.filter(x => x !== label) : [...r, label]));
 
   return (
     <Modal onClose={onClose} className="modal-report">
@@ -33,7 +34,7 @@ export default function ReportModal({ contact, onClose, onSubmit }) {
         </div>
         <div>
           <h2 className="modal-title">Denunciar {contact.name}</h2>
-          <p className="modal-text">Por que você está denunciando este contato? Denunciar não bloqueia o contato.</p>
+          <p className="modal-text">Por que você está denunciando este contato? Selecione um ou mais motivos. Denunciar não bloqueia o contato.</p>
         </div>
       </div>
 
@@ -42,8 +43,9 @@ export default function ReportModal({ contact, onClose, onSubmit }) {
           <button
             key={label}
             type="button"
-            className={`reason-card${reason === label ? ' selected' : ''}`}
-            onClick={() => setReason(label)}
+            className={`reason-card${reasons.includes(label) ? ' selected' : ''}`}
+            aria-pressed={reasons.includes(label)}
+            onClick={() => toggle(label)}
           >
             <span className="reason-icon"><Icon size={18} /></span>
             <span className="reason-label">{label}</span>
@@ -69,10 +71,10 @@ export default function ReportModal({ contact, onClose, onSubmit }) {
         <button
           type="button"
           className="btn danger"
-          disabled={!reason}
-          onClick={() => onSubmit(reason, details.trim())}
+          disabled={!reasons.length}
+          onClick={() => onSubmit(REASONS.map(r => r.label).filter(l => reasons.includes(l)), details.trim())}
         >
-          <Flag size={16} /> Enviar denúncia
+          <Flag size={16} /> Enviar denúncia{reasons.length > 1 ? ` (${reasons.length})` : ''}
         </button>
       </div>
     </Modal>

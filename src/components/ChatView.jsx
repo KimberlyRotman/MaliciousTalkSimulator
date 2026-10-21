@@ -46,7 +46,7 @@ export default function ChatView({ contact: c, typing, onBack, onSend, onToggleW
           <div className="chat-name-row">
             <span className="chat-name">{c.name}</span>
             {c.report && (
-              <span className="tag-reported" title={`Motivo: ${c.report.reason}`}>
+              <span className="tag-reported" title={`Motivo(s): ${c.report.reasons.join(', ')}`}>
                 <Flag size={12} /> Contato denunciado
               </span>
             )}

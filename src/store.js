@@ -65,7 +65,11 @@ export function normalizeContact(c) {
     pinned: !!c.pinned,
     wolf: !!c.wolf,
     report: r && typeof r === 'object'
-      ? { reason: String(r.reason || ''), details: String(r.details || ''), date: Number(r.date) || Date.now() }
+      ? {
+        reasons: Array.isArray(r.reasons) ? r.reasons.map(String) : r.reason ? [String(r.reason)] : [],
+        details: String(r.details || ''),
+        date: Number(r.date) || Date.now(),
+      }
       : null,
     unread: Math.max(0, parseInt(c.unread, 10) || 0),
   };

@@ -61,8 +61,8 @@ export default function App() {
     },
   });
 
-  const handleReport = (id, reason, details) => {
-    mutateContact(id, c => { c.report = { reason, details, date: Date.now() }; });
+  const handleReport = (id, reasons, details) => {
+    mutateContact(id, c => { c.report = { reasons, details, date: Date.now() }; });
     setModal(null);
     showToast('Denúncia enviada');
   };
@@ -174,7 +174,7 @@ export default function App() {
         <ReportModal
           contact={reportContact}
           onClose={() => setModal(null)}
-          onSubmit={(reason, details) => handleReport(reportContact.id, reason, details)}
+          onSubmit={(reasons, details) => handleReport(reportContact.id, reasons, details)}
         />
       )}
       {modal?.type === 'confirm' && <ConfirmModal {...modal} onClose={() => setModal(null)} />}
