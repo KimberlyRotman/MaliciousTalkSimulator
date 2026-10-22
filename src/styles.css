@@ -391,6 +391,12 @@ textarea { resize: none; }
 .typing-bubble span:nth-child(2) { animation-delay: .15s; }
 .typing-bubble span:nth-child(3) { animation-delay: .3s; }
 
+.messages.wolf { background-color: #000; background-image: radial-gradient(rgba(255, 255, 255, .12) 1px, transparent 1px); }
+.messages.wolf .chat-hint { background: rgba(255, 255, 255, .12); color: #d4d4d4; box-shadow: none; }
+.messages.wolf .msg.them { background: #dc2626; color: #fff; box-shadow: none; }
+.messages.wolf .msg.them .msg-meta { color: rgba(255, 255, 255, .85); }
+.messages.wolf .typing-bubble.msg.them span { background: #fff; }
+
 .composer {
   display: flex; align-items: flex-end; gap: 10px;
   padding: 14px 20px 18px;

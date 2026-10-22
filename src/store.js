@@ -12,11 +12,29 @@ export function subscribe(listener) {
   return () => listeners.delete(listener);
 }
 
+const API_URL = 'api/data';
+let fileStorage = false;
+let saveTimer = null;
+
+function saveToFile() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    fetch(API_URL, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ contacts: state.contacts }),
+    }).catch(() => { /* localStorage still holds the data */ });
+  }, 300);
+}
+
 function persist() {
+  if (fileStorage) saveToFile();
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({ contacts: state.contacts }));
   } catch {
-    alert('Não foi possível salvar: o armazenamento do navegador está cheio. Use imagens menores ou exporte o JSON e remova contatos.');
+    if (!fileStorage) {
+      alert('Não foi possível salvar: o armazenamento do navegador está cheio. Use imagens menores ou exporte o JSON e remova contatos.');
+    }
   }
 }
 
@@ -82,11 +100,24 @@ export function normalizeData(d) {
 
 export async function loadInitial() {
   let contacts = null;
+  let fileMissing = false;
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) contacts = normalizeData(JSON.parse(raw));
-  } catch (e) {
-    console.error('Dados locais inválidos', e);
+    const res = await fetch(API_URL, { cache: 'no-store' });
+    if (res.ok) {
+      contacts = normalizeData(await res.json());
+      fileStorage = true;
+    } else if (res.status === 404 && (res.headers.get('content-type') || '').indexOf('html') === -1) {
+      fileStorage = true;
+      fileMissing = true;
+    }
+  } catch { /* no file backend (e.g. file://) */ }
+  if (!contacts) {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) contacts = normalizeData(JSON.parse(raw));
+    } catch (e) {
+      console.error('Dados locais inválidos', e);
+    }
   }
   if (!contacts) {
     // Optional preset next to index.html (only reachable when served over http).
@@ -96,4 +127,6 @@ export async function loadInitial() {
     } catch { /* no preset */ }
   }
   update(s => { s.contacts = contacts || []; }, { save: false });
+  // First run with the file backend: migrate existing local data into data/data.json.
+  if (fileMissing && contacts?.length) saveToFile();
 }

@@ -20,5 +20,6 @@ npm run build   # gera dist/index.html (arquivo único, abre direto no navegador
 
 ## Dados (JSON)
 
-Os dados ficam salvos no `localStorage` do navegador (formato JSON).
-Se o app for servido via HTTP (ex.: `npm run dev`) e não houver dados locais, um arquivo `public/data.json` é carregado automaticamente como dados iniciais.
+Com `npm run dev` (ou `npm run preview`), contatos, roteiros e mensagens são salvos em `data/data.json` e recarregados ao reiniciar o app.
+Ao abrir `dist/index.html` direto do disco, os dados ficam apenas no `localStorage` do navegador.
+Se o arquivo `data/data.json` ainda não existir, os dados do `localStorage` são migrados para ele na primeira execução.

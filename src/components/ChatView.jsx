@@ -97,7 +97,7 @@ export default function ChatView({ contact: c, typing, onBack, onSend, onToggleW
         </div>
       </header>
 
-      <div className="messages" ref={listRef}>
+      <div className={`messages${c.wolf ? ' wolf' : ''}`} ref={listRef}>
         {c.messages.length === 0 && !typing && (
           <div className="chat-hint">As mensagens desta conversa são simuladas.</div>
         )}
